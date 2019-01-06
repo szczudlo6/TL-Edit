@@ -8,10 +8,10 @@
 #property version   "1.00"
 #property strict
 
-#include <clsFile.mqh>
+#include <EDIT_clsFile.mqh>
 #include <clsStruct.mqh>
 
-#import "clsHelperFunction.ex4"
+#import "EDIT_clsHelperFunction.ex4"
       void QuickSortArray1Dimension5Struct(strGlobal &arr[], int StartPos, int EndPos, bool SmallestToLarges);
       string CreateMagicNumber();
 #import

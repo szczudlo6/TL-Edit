@@ -26,6 +26,7 @@ public:
                      bool OpenOrder(int OpenedOrder, int order, double lotsize, double stoploss, double takeprofit, int _magicnumber);
                      bool CloseOrderByMagicNumber(int magicnumber);
                      bool CheckMagicNumber(int _magicNumber);
+                     void Trailing(int _magicnumber, double _trailingstop);
                      void SetOrderArrayFromFile(strGlobal &arrFile[]) {ArrayCopy(arrMagicNumberList,arrFile);};
                      
                      clsOrder(double _moneyRisk, int _maxOpenPosition);
@@ -142,6 +143,23 @@ bool clsOrder::CheckMagicNumber(int _magicNumber)
          return(true);
    }   
    return(false);
+}
+void clsOrder::Trailing(int _magicnumber, double _trailingstop)
+{
+   if(_trailingstop>0)
+      for(int i=OrdersTotal()-1; i >= 0 ;i--)
+      {
+         if(OrderSelect(i,SELECT_BY_POS,MODE_TRADES))
+            if(OrderMagicNumber() == _magicnumber)
+               if(OrderType()==OP_BUY) 
+                  if(Bid-OrderOpenPrice()>Point*_trailingstop)
+                     if(!OrderModify(OrderTicket(),OrderOpenPrice(),NormalizeDouble(Bid-(Point * _trailingstop),Digits),OrderTakeProfit(),0))
+                        Print("Error in OrderModify. Error code=",GetLastError()); 
+               else if(OrderType()==OP_SELL) 
+                  if(Ask-OrderOpenPrice()<Point*_trailingstop)
+                     if(!OrderModify(OrderTicket(),OrderOpenPrice(),NormalizeDouble(Ask+(Point * _trailingstop),Digits),OrderTakeProfit(),0))
+                        Print("Error in OrderModify. Error code=",GetLastError()); 
+       }
 }
 
 clsOrder::clsOrder(double _moneyRisk, int _maxOpenPosition)
